@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef} from "react";
 import {Routes , Route} from "react-router-dom"
 import Content from "./Content.jsx";
 import Header from "./Header.jsx";
@@ -7,49 +7,158 @@ import Footer from "./Footer.jsx";
 import AddTask from "./AddTask.jsx";
 import { use } from "react";
 import Search from "./Search.jsx";
+import apiReq from "./api.js";
+import NavBar from "./NavBar.jsx";
 
 function App() {
-
+  
+  const API_URL = 'http://localhost:3500/items'
   const [newTask , setnewTask] = useState('')
   const [isSearched,setisSearched] = useState(false)
   const [searchValue ,setsearchValue] = useState('');
+  const [data,setData] = useState([])
+  const [isLoading,setisLoading] = useState(true)
 
-  const [data,setData] = useState(JSON.parse(localStorage.getItem('data')) || [])
+  useEffect(()=>{
+    async function getData(){
+      try{
+        const request = await fetch(API_URL);
+        const dataRecieved = await request.json();
+        setData(dataRecieved)
+      }catch(err){
+        console.log(err.stack);
+      }finally{
+        setisLoading(false)
+      }
+    }
+
+    const timeout = setTimeout(getData,1500)
+    return ()=> clearInterval(timeout)
+
+  },[])
 
   const handleClick = (id) =>{
     const newData = data.map(task=> task.id === id ? {...task , checked:!task.checked} : task)
     setData(newData)
-    localStorage.setItem('data',JSON.stringify(newData))
+    const selectedTask = newData.filter(task => task.id === id)
+    const optionsObj = {
+      method : 'PATCH',
+      headers : {
+        'Content-type' : 'application/json'
+      },
+      body: JSON.stringify({checked:selectedTask[0].checked})
+    }
+    const reqUrl = `${API_URL}/${id}`
+    const request = apiReq(reqUrl,optionsObj)
   }
 
-  function handleDelete(id){
-    const newData = data.filter(task => task.id != id)
+  async function handleDelete(id){
+    const newData = data.filter(task => +task.id != id)
     setData(newData)
-    localStorage.setItem('data',JSON.stringify(newData))
+    const optionsObj = {
+      method : 'DELETE'
+    }
+    const reqUrl = `${API_URL}/${id}`
+    const result = await apiReq(reqUrl,optionsObj)
   }
-  function handleSubmit(e){
+  async function handleSubmit(e){
     e.preventDefault();
     const newTaskData = {
-      id: !data.length ? 1 : data[data.length-1].id + 1,
+      id: (data.length === 0 ? 1 : +data[data.length-1].id + 1).toString(),
       checked:false,
       task: newTask
     }
-    console.log(newTaskData);
-    console.log(data);
-    const newDataArray = [...data , newTaskData]
+
+    const newDataArray = [...data,newTaskData]
     setData(newDataArray)
-    localStorage.setItem('data',JSON.stringify(newDataArray))
+
     setnewTask('');
+
+    const optionsObj = {
+      method : 'POST',
+      headers : {
+        'Content-type' : 'application/json'
+      },
+      body:JSON.stringify(newTaskData)
+    }
+
+    const result = await apiReq(API_URL,optionsObj)
   }
 
   return (
     <>
     <div className="App">
       <Header/>
-      <AddTask setnewTask={setnewTask} newTask={newTask} handleSubmit={handleSubmit}/>
-      <Search searchValue={searchValue} setsearchValue={setsearchValue} isSearched={isSearched} setisSearched={setisSearched}/>
-      <Content data={data.filter(tasks => tasks.task.includes(searchValue.toLowerCase()))} setData={setData} handleClick={handleClick} handleDelete={handleDelete} isSearched={isSearched}/>
-      <Footer length={data.length} searchValue={searchValue} data={data} isSearched={isSearched}/>
+      <NavBar></NavBar>
+      <Routes>
+        <Route path='/' element={
+          <>
+          <AddTask setnewTask={setnewTask} newTask={newTask} handleSubmit={handleSubmit}/>
+          <Search searchValue={searchValue} setsearchValue={setsearchValue} isSearched={isSearched} setisSearched={setisSearched}/>
+          <main>
+            {
+              isLoading && <p style={{
+                color:"#0760fb",
+                marginLeft:"120px",
+              }}>loading data</p>
+            }
+            {
+              !isLoading && <Content data={data.filter(tasks => tasks.task.includes(searchValue.toLowerCase()))} setData={setData} handleClick={handleClick} handleDelete={handleDelete} isSearched={isSearched}/>
+            }
+            
+          </main>
+          <Footer length={data.length} searchValue={searchValue} data={data} isSearched={isSearched}/>
+          </>
+        }></Route>
+
+        <Route path='/open' 
+        element={
+          <>
+          {/* <AddTask setnewTask={setnewTask} newTask={newTask} handleSubmit={handleSubmit}/> */}
+          <Search searchValue={searchValue} setsearchValue={setsearchValue} isSearched={isSearched} setisSearched={setisSearched}/>
+          <main>
+            {
+              isLoading && <p style={{
+                color:"#0760fb",
+                marginLeft:"120px",
+              }}>loading data</p>
+            }
+            {
+              !isLoading && <Content data={data.filter(tasks => tasks.task.includes(searchValue.toLowerCase())).filter(tasks=> tasks.checked != true)} setData={setData} handleClick={handleClick} handleDelete={handleDelete} isSearched={isSearched}/>
+            }
+            
+          </main>
+          <Footer length={data.filter(tasks=> tasks.checked != true).length} searchValue={searchValue} data={data.filter(tasks=> tasks.checked != true)} isSearched={isSearched}/>          
+          </>
+        }
+        />
+        <Route path='/closed' element={
+
+          <>
+          
+          {/* <AddTask setnewTask={setnewTask} newTask={newTask} handleSubmit={handleSubmit}/> */}
+          <Search searchValue={searchValue} setsearchValue={setsearchValue} isSearched={isSearched} setisSearched={setisSearched}/>
+          <main>
+            {
+              isLoading && <p style={{
+                color:"#0760fb",
+                marginLeft:"120px",
+              }}>loading data</p>
+            }
+            {
+              !isLoading && <Content data={data.filter(tasks => tasks.task.includes(searchValue.toLowerCase())).filter(tasks=> tasks.checked != false)} setData={setData} handleClick={handleClick} handleDelete={handleDelete} isSearched={isSearched}/>
+            }
+            
+          </main>
+          <Footer length={data.filter(tasks=> tasks.checked != false).length} searchValue={searchValue} data={data.filter(tasks=> tasks.checked != false)} isSearched={isSearched}/>
+          
+          </>
+
+        }>
+
+        </Route>
+      </Routes>
+      
     </div>
     </>
   );

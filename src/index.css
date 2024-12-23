@@ -19,7 +19,7 @@ body{
 
 .header{
   height: 50px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color: #0760FB;
   font-weight: bold;
   font-size: 2em;
@@ -34,12 +34,17 @@ body{
   padding: 20px;
   width: 400px;
   border-radius: 30px;
-  height: 80vh;
+  height: 90vh;
   background-color: #f3f0f0;
   overflow: hidden;
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column; */
 }
 
 .addTaskDiv{
+  margin-left: 5px;
   width: 100%;
   height: 50px;
   display: flex;
@@ -71,8 +76,12 @@ body{
   transition: 0.1s ease-in-out;
 }
 
+.addTaskDiv > form > input:hover{
+  background-color: hsl(218, 71%, 85%);
+}
+
 .addTaskDiv > form > button:hover{
-  background-color: #0760FB;
+  background-color: rgb(7, 96, 251);
 }
 
 .searchBox{
@@ -96,10 +105,20 @@ body{
   align-items: center;
 }
 
+.searchBox input:hover{
+  background-color: hsl(10, 91%, 78%);
+}
+
 .contentDiv{
-  margin-top: 10px;
-  height: 380px;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  margin-top: 15px;
+  padding-top: 15px;
+  height: 400px;
   overflow-y: auto;
+  border-top: 1px dotted black;
+  border-bottom: 0.5px dotted gray;
 }
 
 .footer{
@@ -115,11 +134,11 @@ body{
   justify-content: center;
 }
 
-ul{
+.taskList{
   list-style: none;
 }
 
-li{
+.taskComponent{
   padding: 10px;
   border-radius: 10px;
   background-color: #FFFFFF;
@@ -128,16 +147,20 @@ li{
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  width: 350px;
 }
 
-li > input{
-  width: 30px;
-  height: 30px;
+.taskComponent > input{
+  width: 15px;
+  height: 15px;
 }
 
-li > label{
-  width: 280px;
+.taskComponent > label{
+  width: 230px;
+  display: block;
   margin: 0px 10px;
+  word-wrap: break-word; 
+  word-break: break-word;
 }
 
 .deleteButton{
@@ -146,6 +169,7 @@ li > label{
   width: 30px;
   height: 30px;
   overflow-y: auto;
+  color: hsl(218, 71%, 85%);
 }
 
 .deleteButton:hover{
@@ -154,4 +178,36 @@ li > label{
 
 .contentDiv::-webkit-scrollbar{
   display: none;
+}
+
+.navList{
+  margin: 15px;
+  display: flex;
+  justify-content: space-evenly;
+  list-style: none;
+  text-decoration: none;
+}
+
+.navComponent{
+  text-decoration: none;
+  color:#b7b7b7;
+  font-weight: 500;
+}
+
+
+
+.active{
+  color: #0760FB;
+}
+
+.editButton{
+  position: absolute;
+  right: 45px;
+  width: 23px;
+  height: 23px;
+  overflow-y: auto;
+  color: hsl(218, 71%, 85%);
+}
+.editButton:hover{
+  color:#0760FB;
 }

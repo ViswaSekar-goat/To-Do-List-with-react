@@ -2,11 +2,12 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import { MdDelete } from "react-icons/md";
+import { FaPen } from "react-icons/fa";
 
 const SingleTask = ({element,handleClick,handleDelete,isSearched}) => {
   return (
     <>
-      <li>
+      <li className='taskComponent' style={isSearched ? {backgroundColor : "#E2EBFA"} : {backgroundColor : "white"}}>
         <input type="checkBox" checked={element.checked} onChange={()=>{handleClick(element.id)}}/>
         <label 
         onDoubleClick={()=>handleDelete(element.id)}
@@ -14,6 +15,7 @@ const SingleTask = ({element,handleClick,handleDelete,isSearched}) => {
         >
           {element.task}
         </label>
+        <FaPen role='button' className='editButton'/>
         <MdDelete className='deleteButton' role='button' onClick={()=>handleDelete(element.id)}/>
       </li>
     </>

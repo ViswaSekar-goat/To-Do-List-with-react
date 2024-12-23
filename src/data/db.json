@@ -1,19 +1,29 @@
 {
-  "items":[
+  "items": [
     {
-      "id":1,
-      "checked":true,
-      "data":"hello"
+      "id": "2",
+      "checked": false,
+      "task": "so whats up now"
     },
     {
-      "id":2,
-      "checked":true,
-      "data":"hello2"
+      "id": "3",
+      "checked": true,
+      "task": "new task 4"
     },
     {
-      "id":3,
-      "checked":false,
-      "data":"hello 3"
+      "id": "4",
+      "checked": true,
+      "task": "new task 3"
+    },
+    {
+      "id": "5",
+      "checked": false,
+      "task": "hello task"
+    },
+    {
+      "id": "6",
+      "checked": false,
+      "task": "whats the new task"
     }
   ]
 }

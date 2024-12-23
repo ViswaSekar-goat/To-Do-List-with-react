@@ -7,7 +7,7 @@ import SingleTask from './SingleTask';
 const Content = ({data,setData,handleClick,handleDelete,isSearched}) => {
   return (
     <div className='contentDiv'>
-      <ul>
+      <ul className='taskList'>
         {
           data.map((element)=>{
             return(
